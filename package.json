@@ -1,0 +1,24 @@
+{
+  "name": "homestead-sites",
+  "version": "1.0.0",
+  "description": "A script to make new homestead sites",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel lib -d dist --presets es2015,stage-2 && npm install -g"
+  },
+  "author": "Jacob Aretz",
+  "license": "ISC",
+  "bin": {
+    "site": "./dist/index.js"
+  },
+  "dependencies": {
+    "commander": "^2.11.0",
+    "node-yaml": "^3.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  }
+}
