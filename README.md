@@ -28,17 +28,13 @@ Available options:
 
 `site set homestead-dir path-to-homestead-folder`
 
----
-
 **Make sure to enter the full path**
 
 Example: `C:/Users/YourName/Homestead/Homestead.yaml`
 
----
-
 ### Step 2
 
-**This command requires administration rights**
+> **This command requires administration rights**
 
 To add a new site, use the command below
 
