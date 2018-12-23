@@ -14,6 +14,10 @@
   },
   "author": "Jacob Aretz",
   "license": "MIT",
+  "keywords": [
+    "homestead",
+    "vagrant"
+  ],
   "bin": {
     "site": "./dist/bundle.js"
   },
