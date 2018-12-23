@@ -38,4 +38,4 @@ Example: `C:/Users/YourName/Homestead/Homestead.yaml`
 
 To add a new site, use the command below
 
-`site new site-new -p code/path-to-your-project`
+`site new site-name -p code/path-to-your-project`
