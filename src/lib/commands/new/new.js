@@ -1,28 +1,28 @@
 const fs = require('fs');
 const yaml = require('node-yaml');
 const {
-    write
+    writeSync
 } = require('node-yaml');
-const exec = require('child_process').exec;
+const exec = require('child_process').execSync;
 const path = require('path');
 
 export class NewCommand {
-    constructor(name, hpath, homestead_path) {
+    constructor(name, path) {
         this.name = name;
-        this.path = hpath;
+        this.path = path;
     }
 
     run() {
         // Get users details
-        fs.readFile(path.resolve(__dirname, '../../../data/config.json'), 'utf-8', (err, data) => {
+        fs.readFile(path.resolve(__dirname, 'config.json'), 'utf-8', (err, data) => {
             if (err) {
-                console.log('there went something wrong');
+                console.log('Something went wrong');
             } else {
                 const obj = JSON.parse(data);
                 this.homesteadPath = obj.yamlpath;
                 this.hostsPath = obj.hostspath;
                 this.homesteadDirectory = obj.homesteadDirectory;
-                this.homesteadDisc = obj.homesteadDisc;
+                this.homesteadDisc = obj.homesteadDirectory.split('/')[0] + '/';
 
                 // Run everything
                 this.writeHomesteadYaml();
@@ -40,18 +40,31 @@ export class NewCommand {
             fileData = yaml.readSync(this.homesteadPath, {
                 encoding: 'utf-8'
             });
-            fileData.sites.push({
-                map: `${this.name}.local`,
-                to: this.path
-            });
+
+            if (!fileData.sites) {
+                fileData.sites = [
+                    {
+                        map: `${this.name}.lcl`,
+                        to: `/home/vagrant/${this.path}`
+                    }
+                ];
+            } else {
+                fileData.sites.push({
+                    map: `${this.name}.lcl`,
+                    to: this.path
+                });
+            }
+
         } catch (e) {
             console.error("Could not find homestead.yaml");
+            process.exit();
         }
 
         // Write the new site to homestead.yaml
-        write(this.homesteadPath, fileData, "utf-8", (err) => {
+        writeSync(this.homesteadPath, fileData, "utf-8", (err) => {
             if (err) {
                 console.error("Failed writing homestead.yaml");
+                process.exit();
             } else {
                 console.log("Finish writing homestead.yaml")
             }
@@ -60,11 +73,12 @@ export class NewCommand {
 
     writeHostsFile() {
         console.log("Writing hosts file");
-        let content = `\n 192.168.10.10 ${this.name}.local`;
+        let content = `\n 192.168.10.10 ${this.name}.lcl`;
 
-        fs.appendFile(this.hostsPath, content, (err) => {
+        fs.appendFileSync(this.hostsPath, content, (err) => {
             if (err) {
                 console.error("Failed writing hosts file");
+                process.exit();
             } else {
                 console.log("Finish writing hosts file");
             }
@@ -73,11 +87,13 @@ export class NewCommand {
 
     provisionHomestead() {
         console.log("Start provisioning homestead");
-        let reloadCommand = exec(`${this.homesteadDisc} & cd ${this.homesteadDirectory} & vagrant reload --provision`, (error, stdout, stderr) => {
+        exec(`cd ${this.homesteadDirectory} & vagrant reload --provision`, (error, stdout, stderr) => {
             if (stderr) {
                 console.error(stderr);
+                process.exit();
             } else if (error) {
                 console.error("Failed provisioning homestead");
+                process.exit();
             } else {
                 console.log("Finish provisioning homestead");
             }

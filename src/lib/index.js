@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const program = require('commander');
 
 import { NewCommand } from './commands/new/new';
